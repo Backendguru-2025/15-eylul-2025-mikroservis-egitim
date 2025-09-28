@@ -1,11 +1,10 @@
 package com.beguru.service.product;
 
-import java.util.List;
-import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor // Lombok: final alanlar için bir constructor oluşturur (DI)
@@ -52,6 +51,31 @@ public class ProductService {
             return true; // Başarıyı belirtir
         }
         return false; // Ürünün bulunamadığını belirtir
+    }
+
+    // Ürün güncelleme metodu
+    public Optional<ProductResponse> updateProduct(Long id, UpdateProductRequest updateRequest) {
+        return productRepository.findById(id)
+                .map(existingProduct -> {
+                    existingProduct.setName(updateRequest.name());
+                    existingProduct.setDescription(updateRequest.description());
+                    existingProduct.setPrice(updateRequest.price());
+                    return toResponse(productRepository.save(existingProduct));
+                });
+    }
+
+    // Ürün kısmi güncelleme metodu
+    public Optional<ProductResponse> patchProduct(Long id, PartialUpdateRequest patchRequest) {
+        return productRepository.findById(id)
+                .map(existingProduct -> {
+                    if (patchRequest.description() != null) {
+                        existingProduct.setDescription(patchRequest.description());
+                    }
+                    if (patchRequest.price() != null) {
+                        existingProduct.setPrice(patchRequest.price());
+                    }
+                    return toResponse(productRepository.save(existingProduct));
+                });
     }
 
 }
