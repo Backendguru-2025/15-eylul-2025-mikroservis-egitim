@@ -1,0 +1,32 @@
+services:
+  product-service:
+    build: ./product-service
+
+    ports:
+      - "8080:8080"
+
+    #entrypoint:
+
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+  mysql-db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=cokgizlisifre
+      - MYSQL_DATABASE=default_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-pcokgizlisifre" ]
+      timeout: 20s
+      retries: 10
+
+
+volumes:
+  mysql_data:
+

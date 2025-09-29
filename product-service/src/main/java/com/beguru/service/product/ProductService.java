@@ -10,7 +10,7 @@ import java.util.Optional;
 @RequiredArgsConstructor // Lombok: final alanlar için bir constructor oluşturur (DI)
 public class ProductService {
 
-    private final ProductRepository productRepository;
+    private final JpaProductRepository productRepository;
     // Yeni bir ürün oluşturma metodu
     // @Transactional // Bunun bir DB işlemi içinde çalışmasını sağlar (şimdilik opsiyonel)
     public ProductResponse createProduct(NewProductRequest newProductRequest) {
