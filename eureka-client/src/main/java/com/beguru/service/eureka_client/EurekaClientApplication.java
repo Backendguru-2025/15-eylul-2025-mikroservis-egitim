@@ -1,21 +1,15 @@
-package com.beguru.service.product;
-
-import java.time.LocalDateTime;
+package com.beguru.service.eureka_client;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableDiscoveryClient
-@Slf4j
 @SpringBootApplication
-public class ProductApplication {
+public class EurekaClientApplication {
 
 	public static void main(String[] args) {
-		log.info("Hello world {}", LocalDateTime.now());
-		SpringApplication.run(ProductApplication.class, args);
+		SpringApplication.run(EurekaClientApplication.class, args);
 	}
 
 }
