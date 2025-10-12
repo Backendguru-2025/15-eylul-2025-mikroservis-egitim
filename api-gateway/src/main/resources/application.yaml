@@ -1,0 +1,81 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "optional:configserver:http://config-server:8888"
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+          - id: products-tracing
+            # http://localhost:9080/ (GET) (X-Request-Id: 123456789)
+            uri: http://product-service:8080
+            predicates:
+              - Header=X-Request-Id, \d+
+              - Method=GET
+            filters:
+              - SetPath=/actuator/health
+          - id: query_route
+            uri: http://product-service:8080
+            # http://localhost:9080/query?all=true (GET)
+            predicates:
+              - Path=/query
+              - Method=GET
+              - Query=all
+            filters:
+              - SetPath=/v1/products/100
+          - id: add_request_headers_route
+            # http://localhost:9080/trace?trace=true (GET)
+            uri: http://product-service:8080
+            predicates:
+              - Path=/trace
+              - Method=GET
+              - Query=trace
+            filters:
+              - AddRequestHeadersIfNotPresent=X-Trace-Id:99
+              - SetPath=/v1/products/99
+          - id: remove_json_attributes_route
+            # http://localhost:9080/remove-json-attributes (GET)
+            #  {
+            #    "name": "Universal security cable lock for laptops.",
+            #    "description": "Laptop Lock Cable Security",
+            #    "price": 14.00
+            #  }
+            uri: http://product-service:8080
+            predicates:
+              - Path=/remove-json-attributes
+              - Method=GET
+            filters:
+              - RemoveJsonAttributesResponseBody=productId
+              - SetPath=/v1/products/98
+          - id: products
+            # http://localhost:9080/mobile/products/1 (GET)
+            uri: http://product-service:8080
+            predicates:
+              - Path=/mobile/products/**
+              #- Path=/web/products/**
+            filters:
+              - RewritePath=/mobile/?(?<segment>.*), /v1/$\{segment}
+          - id: host_route
+            # http://localhost:9080/ (GET) (Host: localhost)
+            uri: http://product-service:8080
+            predicates:
+              - Host=localhost
+              - Method=GET
+            filters:
+              - SetPath=/v1/products/1
+          - id: method_route
+            # http://localhost:9080/products (GET)
+            # (POST)X
+            uri: http://product-service:8080
+            predicates:
+              - Method=GET
+            filters:
+              - SetPath=/v1/products
+
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
