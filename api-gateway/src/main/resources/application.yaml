@@ -4,9 +4,14 @@ spring:
   config:
     import: "optional:configserver:http://config-server:8888"
   cloud:
+    loadbalancer:
+      enabled: true
     gateway:
       server:
         webflux:
+          discovery:
+            locator:
+              enabled: true
           routes:
           - id: products-tracing
             # http://localhost:9080/ (GET) (X-Request-Id: 123456789)
@@ -49,7 +54,7 @@ spring:
             filters:
               - RemoveJsonAttributesResponseBody=productId
               - SetPath=/v1/products/98
-          - id: products
+          - id: mobile-products
             # http://localhost:9080/mobile/products/1 (GET)
             uri: http://product-service:8080
             predicates:
@@ -78,4 +83,7 @@ logging:
   level:
     org:
       springframework:
-        web: DEBUG
+        cloud.gateway: DEBUG
+        cloud.loadbalancer: DEBUG
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
