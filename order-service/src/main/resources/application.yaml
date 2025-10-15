@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: order-service
+  threads.virtual.enabled: false
+  sql.init.mode: always
+  jpa:
+    defer-datasource-initialization: true
+    hibernate.ddl-auto: create-drop
+    properties.hibernate.dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    url: jdbc:mysql://mysql-db:3306/orderservicedb?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: orderdbuser
+    password: cokgizlisifre
+

@@ -1,0 +1,84 @@
+package com.beguru.service.order_service;
+
+import com.beguru.service.order_service.client.product.ProductClientFacade;
+import com.beguru.service.order_service.client.product.ProductResponse;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+@Slf4j
+@Service // Bunu bir Spring servis bileşeni olarak işaretler
+@RequiredArgsConstructor // Lombok: final alanlar için bir constructor oluşturur (DI)
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final ProductClientFacade productClientFacade;
+//    private final UserClientFacade userClientFacade;
+//    private final MeterRegistry meterRegistry;
+//    private final OrderEventProducer orderEventProducer;
+
+    public List<OrderResponse> getAllOrders() {
+        var orderEntities = orderRepository.findAll();
+        return orderEntities.stream().map(this::toResponse).toList(); // JpaRepository'nin findAll metodunu kullanır
+    }
+
+    //mapper function
+    private OrderResponse toResponse(OrderEntity e) {
+        return new OrderResponse(
+                e.getProductId(),
+                e.getUserId(),
+                e.getQuantity()
+        );
+    }
+
+    public Optional<OrderResponse> getOrderById(Long id) {
+        return orderRepository.findById(id).map(this::toResponse); // JpaRepository'nin findById metodunu kullanır
+    }
+
+    public OrderResponse createOrder(NewOrderRequest newOrderRequest) {
+        checkProduct(newOrderRequest);
+        checkUser(newOrderRequest);
+
+        OrderEntity order = createOrderEntity(newOrderRequest);
+
+//        orderEventProducer.sendOrderCreatedEvent(
+//                new OrderCreatedEvent(order.getId(),
+//                        order.getUserId(),
+//                        LocalDateTime.now(),
+//                        order.getProductId()
+//                ));
+//        Counter counter = meterRegistry.counter("orders.placed", "userId", order.getUserId().toString());
+//        counter.increment();
+        return toResponse(order); // JpaRepository'nin save metodunu kullanır
+    }
+
+    private OrderEntity createOrderEntity(NewOrderRequest newOrderRequest) {
+        var orderEntity = new OrderEntity();
+        orderEntity.setProductId(newOrderRequest.productId());
+        orderEntity.setUserId(newOrderRequest.userId());
+        orderEntity.setQuantity(newOrderRequest.quantity());
+        OrderEntity order = orderRepository.save(orderEntity);
+        return order;
+    }
+
+    private void checkProduct(NewOrderRequest newOrderRequest) {
+        ProductResponse foundProduct = productClientFacade.getProduct(newOrderRequest.productId());
+        if (foundProduct.productId() != newOrderRequest.productId()) {
+            throw new RuntimeException("Product not found productId: " + newOrderRequest.productId());
+        }
+    }
+
+    private void checkUser(NewOrderRequest newOrderRequest) {
+//        UserResponse foundUser = userClientFacade.getUser(newOrderRequest.userId());
+//        if (foundUser.username().equals("0") || foundUser.username().equals("-1")) {
+//            throw new RuntimeException("User not found userId: " + newOrderRequest.userId());
+//        }
+    }
+
+}

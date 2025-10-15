@@ -86,6 +86,31 @@ services:
         limits:
           memory: 256M
 
+  order-service:
+    build: ./order-service
+ #   environment:
+ #     - LOGSTASH_HOST=logstash
+ #     - LOGSTASH_PORT=5000
+    ports:
+      - "8090:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      #      logstash:
+      #        condition: service_healthy
+  #    zipkin-server:
+  #      condition: service_healthy
+    #      keycloak:
+    #        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
   mysql-db:
     image: mysql:8.0
     ports:
