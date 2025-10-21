@@ -12,3 +12,14 @@ spring:
     username: orderdbuser
     password: cokgizlisifre
 
+  config:
+    import: "optional:configserver:http://config-server:8888"
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
