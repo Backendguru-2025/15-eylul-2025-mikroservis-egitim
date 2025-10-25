@@ -1,0 +1,36 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'microservices-monitor'
+
+scrape_configs:
+#  - job_name: 'config-server'
+#    static_configs:
+#      - targets: ['config-server:8888']
+#    metrics_path: '/actuator/prometheus'
+#
+#  - job_name: 'eureka-server'
+#    static_configs:
+#      - targets: ['eureka-server:8761']
+#    metrics_path: '/actuator/prometheus'
+#
+#  - job_name: 'eureka-client'
+#    static_configs:
+#      - targets: ['eureka-client:8081']
+#    metrics_path: '/actuator/prometheus'
+#
+#  - job_name: 'api-gateway'
+#    static_configs:
+#      - targets: ['api-gateway:8080']
+#    metrics_path: '/actuator/prometheus'
+
+  - job_name: 'order-service'
+    static_configs:
+      - targets: ['order-service:8080']
+    metrics_path: '/actuator/prometheus'
+
+#  - job_name: 'product-service'
+#    static_configs:
+#      - targets: ['product-service:8083']
+#    metrics_path: '/actuator/prometheus'

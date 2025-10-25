@@ -20,7 +20,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductClientFacade productClientFacade;
 //    private final UserClientFacade userClientFacade;
-//    private final MeterRegistry meterRegistry;
+    private final MeterRegistry meterRegistry;
 //    private final OrderEventProducer orderEventProducer;
 
     public List<OrderResponse> getAllOrders() {
@@ -53,8 +53,8 @@ public class OrderService {
 //                        LocalDateTime.now(),
 //                        order.getProductId()
 //                ));
-//        Counter counter = meterRegistry.counter("orders.placed", "userId", order.getUserId().toString());
-//        counter.increment();
+        Counter counter = meterRegistry.counter("orders.placed", "userId", order.getUserId().toString());
+        counter.increment();
         return toResponse(order); // JpaRepository'nin save metodunu kullanır
     }
 
