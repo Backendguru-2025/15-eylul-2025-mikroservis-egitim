@@ -15,6 +15,23 @@ spring:
   config:
     import: "optional:configserver:http://config-server:8888"
 
+  kafka:
+    producer:
+      bootstrap-servers: kafka:29092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    consumer:
+      bootstrap-servers: kafka:29092
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.use.type.headers: false
+        spring.json.value.default.type: com.beguru.service.order_service.event.Event
+
 management:
   endpoint:
     health:
@@ -34,3 +51,4 @@ management:
     enabled: true
     sampling:
       probability: 1.0
+
