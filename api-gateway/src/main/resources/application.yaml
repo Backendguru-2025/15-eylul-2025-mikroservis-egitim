@@ -87,3 +87,10 @@ logging:
         cloud.loadbalancer: DEBUG
     com.netflix.eureka: DEBUG
     com.netflix.discovery: DEBUG
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://keycloak:8080/realms/microservices-realm
+          # jwk-set-uri: İsteğe bağlı, genellikle issuer-uri'den keşfedilir
