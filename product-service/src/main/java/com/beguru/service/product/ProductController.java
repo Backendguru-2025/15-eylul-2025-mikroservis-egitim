@@ -1,5 +1,6 @@
 package com.beguru.service.product;
 
+import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @RolesAllowed("user")
     @GetMapping(value = "/{productId}", produces= MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProductResponse> getProducts(@PathVariable Long productId){
     Optional<ProductResponse> product = productService.getProductById(productId);
@@ -32,6 +34,7 @@ public class ProductController {
         return productService.createProduct(product);
     }
 
+    @RolesAllowed("invalid-role")
     @GetMapping
     public List<ProductResponse> getAllProducts() {
         return productService.getAllProducts();

@@ -78,6 +78,15 @@ spring:
               - Method=GET
             filters:
               - SetPath=/v1/products
+          default-filters:
+            - TokenRelay= # Bu, erişim belirtecini(access token) aktaracaktır
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #issuer-uri: http://keycloak:8080/realms/microservices-realm
+          jwk-set-uri: http://keycloak:8080/realms/microservice-realm/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/microservice-realm
 
 logging:
   level:
@@ -88,9 +97,3 @@ logging:
     com.netflix.eureka: DEBUG
     com.netflix.discovery: DEBUG
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: http://keycloak:8080/realms/microservices-realm
-          # jwk-set-uri: İsteğe bağlı, genellikle issuer-uri'den keşfedilir
